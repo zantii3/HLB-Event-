@@ -5,12 +5,9 @@ import Navbar from '../components/Navbar'
 import discoBallImage from '../assets/images/ball 2.png'
 import booksImage from '../assets/images/books.png'
 import cassetteImage from '../assets/images/caset.png'
-import floorplanImage from '../assets/images/floorplan.png'
 import menImage from '../assets/images/men.png'
-import venueImage from '../assets/images/venue.png'
 import vinylImage from '../assets/images/vinyl.png'
 import womenImage from '../assets/images/women.png'
-import VenueFlipCard from '../components/VenueFlipCard'
 import teaserVideo from '../assets/videos/teaser.mp4'
 
 const eventDate = new Date('2026-12-04T18:00:00+08:00')
