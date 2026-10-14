@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Paytone+One&family=Poppins:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+	--cream: #F7EBD3;
+	--burnt-orange: #D65A35;
+	--mustard: #E9B347;
+	--sand: #D9C4A1;
+	--dark-brown: #503626;
+	--olive: #88845A;
+	--font-heading: 'Paytone One', sans-serif;
+	--font-body: 'Poppins', sans-serif;
+	--font-ui: 'Montserrat', sans-serif;
+}
+
+body {
+	margin: 0;
+	background-color: var(--cream);
+	color: var(--dark-brown);
+	font-family: var(--font-body);
+}
+
+html {
+	scroll-behavior: smooth;
+}
