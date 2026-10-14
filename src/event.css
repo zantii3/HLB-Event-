@@ -767,7 +767,11 @@ a {
 }
 
 .dress-section::after,
-.venue-section::after {
+.venue-section::after,
+.people-section::after,
+.lineup-section::after,
+.media-section::after,
+.closing-section::after {
   position: absolute;
   z-index: 2;
   right: -4%;
@@ -785,6 +789,22 @@ a {
 
 .venue-section::after {
   background: var(--cream);
+}
+
+.people-section::after {
+  background: var(--sand);
+}
+
+.lineup-section::after {
+  background: var(--cream);
+}
+
+.media-section::after {
+  background: var(--olive);
+}
+
+.closing-section::after {
+  background: var(--dark-brown);
 }
 
 .dress-spotlight {
@@ -2354,6 +2374,7 @@ a {
 }
 
 .closing-section {
+  position: relative;
   padding: 110px 24px 120px;
   background: var(--olive);
   color: var(--cream);
