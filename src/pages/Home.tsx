@@ -9,6 +9,7 @@ import menImage from '../assets/images/men.png'
 import vinylImage from '../assets/images/vinyl.png'
 import womenImage from '../assets/images/women.png'
 import teaserVideo from '../assets/videos/teaser.mp4'
+import homeImage from '../assets/images/home2.jpg'
 
 const eventDate = new Date('2026-12-04T18:00:00+08:00')
 type DressStyle = 'men' | 'women'
@@ -158,7 +159,7 @@ function Home() {
             alt="A crowd gathered beneath the lights at a live music event"
             className="event-hero-image"
             fetchPriority="high"
-            src="src/assets/images/home2.jpg"
+            src={homeImage}
           />
           <div aria-hidden="true" className="event-hero-shade" />
           <div className="event-hero-content">
