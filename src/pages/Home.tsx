@@ -2,12 +2,28 @@ import { useEffect, useRef, useState } from 'react'
 import Countdown from '../components/Countdown'
 import Footer from '../components/Footer'
 import Navbar from '../components/Navbar'
+import PerformerSection from '../components/PerformerSection'
+import abbaImage from '../assets/images/abba.jpg'
+import abbaTrack from '../assets/videos/ABBA.mp4'
+import abbaGimmeTrack from '../assets/videos/Gimme.mp4'
+import abbaMammaTrack from '../assets/videos/Mamma.mp4'
+import vstMagsayawanTrack from '../assets/videos/Magsayawan.mp4'
+import vstRockTrack from '../assets/videos/Rock.mp4'
+import vstAwitinTrack from '../assets/videos/Awitin.mp4'
+import hotdogBonggaTrack from '../assets/videos/Bongga.mp4'
+import hotdogManilaTrack from '../assets/videos/Manila.mp4'
+import hotdogAnnieTrack from '../assets/videos/Annie.mp4'
 import discoBallImage from '../assets/images/ball 2.png'
 import booksImage from '../assets/images/books.png'
 import cassetteImage from '../assets/images/caset.png'
+import floorplanImage from '../assets/images/floorplan.png'
+import hotdogImage from '../assets/images/hotdog.jpg'
 import menImage from '../assets/images/men.png'
+import venueImage from '../assets/images/thefav.png'
 import vinylImage from '../assets/images/vinyl.png'
+import vstImage from '../assets/images/vst.jpg'
 import womenImage from '../assets/images/women.png'
+import VenueFlipCard from '../components/VenueFlipCard'
 import teaserVideo from '../assets/videos/teaser.mp4'
 import homeImage from '../assets/images/home2.jpg'
 
@@ -325,7 +341,7 @@ function Home() {
           <span aria-hidden="true" className="dress-mark">HLB</span>
         </section>
 
-        <section aria-labelledby="venue-title" className="venue-section page-section" id="venue">
+         <section aria-labelledby="venue-title" className="venue-section page-section" id="venue">
           <div className="section-kicker"><span>03</span><span>Find your way</span></div>
           <div className="venue-heading">
             <div>
@@ -333,20 +349,67 @@ function Home() {
               <h2 id="venue-title">The<em> Venue.</em></h2>
             </div>
           </div>
-          <div className="details-coming-soon venue-broadcast" data-scroll-reveal>
-            <div aria-label="The location is still under wraps" className="venue-broadcast-screen" role="img">
-              <div aria-hidden="true" className="venue-broadcast-static" />
-              <div aria-hidden="true" className="venue-signal-line"><span /></div>
-              <strong>THE LOCATION IS STILL UNDER WRAPS.</strong>
+          <div className="venue-extras" data-scroll-reveal>
+            <div className="venue-gallery">
+              <div className="venue-extra-heading">
+                <p className="eyebrow">A little preview</p>
+                <h2>Event <em>Place</em></h2>
+                <p className="venue-flip-instruction">Flip a card for details.</p>
+              </div>
+              <div className="venue-gallery-images">
+                <VenueFlipCard
+                  image={venueImage}
+                  imageAlt="The Vermillion Events"
+                  imageFit="cover"
+                  title="The Vermillion Events"
+                  note="Vermillion Events creates memorable experiences through thoughtfully planned events, bringing people together through creativity, entertainment, and celebration."
+                />
+                <VenueFlipCard
+                  image={floorplanImage}
+                  imageAlt="Floor plan showing Grand Hall 1, Grand Hall 2, the pre-function hall, board room, and parking"
+                  title="Floor plan"
+                  note="Grand Hall 1 is at the lower-left of the plan. The pre-function hall is just above it, with parking shown on the right."
+                />
+              </div>
             </div>
-            <div className="venue-broadcast-footer">
-              <span className="details-status"><span aria-hidden="true" className="venue-signal-indicator" />SIGNAL PENDING</span>
-              <p>Tuning in... confirmed address and travel information will be announced soon.</p>
+            <div className="venue-map-section">
+              <div className="venue-extra-heading">
+                <p className="eyebrow">Map preview</p>
+                <h2>Find your <em>way.</em></h2>
+              </div>
+              <iframe
+                aria-label="Google Maps preview of M1 Tower in Makati; event details to be announced"
+                className="venue-map"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7723.436890338446!2d121.0168886917272!3d14.55808679369286!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c908771a70a1%3A0x46d538a8d449a64b!2sM1%20Tower!5e0!3m2!1sen!2sph!4v1791389186944!5m2!1sen!2sph"
+                title="M1 Tower map preview"
+              />
+              <dl className="venue-map-details">
+                <div>
+                  <dt>Address</dt>
+                  <dd>M1 Tower, Dela Costa St. Salcedo Village Makati City</dd>
+                </div>
+                <div>
+                  <dt>Parking information</dt>
+                  <dd>8th Floor Parking</dd>
+                </div>
+                <div>
+                  <dt>ETA from Emapta</dt>
+                  <dd>15–20 mins walk, 10 mins ride</dd>
+                </div>
+              </dl>
+              <a
+                className="venue-directions-link"
+                href="https://www.google.com/maps/dir/?api=1&destination=M1+Tower%2C+Makati+City%2C+Philippines"
+                rel="noreferrer"
+                target="_blank"
+              >
+                Get Directions <span aria-hidden="true">↗</span>
+              </a>
             </div>
           </div>
-         
         </section>
-
         <section aria-labelledby="hosts-title" className="people-section page-section" data-scroll-reveal id="hosts">
           <div className="section-kicker"><span>04</span><span>The people</span></div>
           <div className="people-heading">
@@ -382,21 +445,36 @@ function Home() {
         <section aria-labelledby="performers-title" className="lineup-section page-section" data-scroll-reveal id="performers">
           <div className="section-kicker"><span>05</span><span>On the bill</span></div>
           <div className="lineup-heading">
-                     <h2 id="performers-title">The<em> Performers</em></h2>
-            <p>Performer details aren’t available yet. Check back for an announcement.</p>
+            <h2 id="performers-title">The<em> Performers</em></h2>
+            <p>Meet the artists bringing the seventies sound to the dance floor. Tap a record to listen.</p>
           </div>
-          <div className="lineup-poster" data-scroll-reveal>
-            <div className="lineup-poster-heading">
-              <span>HLB PRESENTS · SIDE A / SIDE B</span>
-              <strong>THE ARTISTS WILL BE REVEALED SOON.</strong>
-            </div>
-            <div className="lineup-feature-slot">
-              <span className="lineup-slot-number">SIDE A — 01</span>
-              <svg aria-hidden="true" className="lineup-microphone" viewBox="0 0 48 64">
-                <path d="M24 5a9 9 0 0 0-9 9v15a9 9 0 0 0 18 0V14a9 9 0 0 0-9-9ZM8 27v3a16 16 0 0 0 32 0v-3M24 46v12m-9 0h18" />
-              </svg>
-              <span className="lineup-slot-label">ARTIST LINEUP COMING SOON</span>
-            </div>
+          <div data-scroll-reveal>
+            <PerformerSection performers={[
+              {
+                audioFiles: [abbaTrack, abbaGimmeTrack, abbaMammaTrack, '/music/abba-3.mp4'],
+                audioFileNames: ['ABBA.mp4', 'Gimme.mp4', 'Mamma.mp4', 'abba-3.mp4'],
+                image: abbaImage,
+                imageAlt: 'ABBA',
+                name: 'ABBA',
+                trackTitles: ['Dancing Queen', 'Gimme! Gimme! Gimme!', 'Mamma Mia'],
+              },
+              {
+                audioFiles: [vstMagsayawanTrack, vstRockTrack, vstAwitinTrack, '/music/vst-3.mp4'],
+                audioFileNames: ['Magsayawan.mp4', 'Rock.mp4', 'Awitin.mp4', 'vst-3.mp4'],
+                image: vstImage,
+                imageAlt: 'VST',
+                name: 'VST',
+                trackTitles: ['Magsayawan', 'Rock Baby Rock', 'Awitin Mo at Isasayaw Ko'],
+              },
+              {
+                audioFiles: [hotdogBonggaTrack, hotdogManilaTrack, hotdogAnnieTrack, '/music/hotdog-3.mp4'],
+                audioFileNames: ['Bongga.mp4', 'Manila.mp4', 'Annie.mp4', 'hotdog-3.mp4'],
+                image: hotdogImage,
+                imageAlt: 'Hotdog',
+                name: 'Hotdog',
+                trackTitles: ['Bongga Ka Day', 'Manila', 'Annie Batungbakal'],
+              },
+            ]} />
           </div>
         </section>
 

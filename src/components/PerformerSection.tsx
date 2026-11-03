@@ -1,0 +1,249 @@
+import { useRef, useState } from 'react'
+
+type Performer = {
+  image: string
+  imageAlt: string
+  name: string
+  audioFiles: string[]
+  audioFileNames: string[]
+  trackTitles?: string[]
+}
+
+type PerformerSectionProps = {
+  performers: Performer[]
+}
+
+function PerformerSection({ performers }: PerformerSectionProps) {
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const loadedTrackKeyRef = useRef<string | null>(null)
+  const [isPickerOpen, setIsPickerOpen] = useState(false)
+  const [selectedPerformer, setSelectedPerformer] = useState<Performer | null>(null)
+  const [selectedTrack, setSelectedTrack] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [hasAudioError, setHasAudioError] = useState(false)
+
+  const tracks = selectedPerformer
+    ? [1, 2, 3].map((number) => ({
+        number,
+      title:
+        selectedPerformer.trackTitles?.[number - 1] ??
+        `Track ${String(number).padStart(2, '0')}`,
+      audioSrc: selectedPerformer.audioFiles[number - 1],
+      audioFileName: selectedPerformer.audioFileNames[number - 1],
+    }))
+    : []
+  const activeTrack = tracks[selectedTrack]
+
+  const openPicker = (performer: Performer) => {
+    audioRef.current?.pause()
+    setSelectedPerformer(performer)
+    setSelectedTrack(0)
+    setHasAudioError(false)
+    setIsPickerOpen(true)
+  }
+
+  const closePicker = () => {
+    audioRef.current?.pause()
+    setIsPickerOpen(false)
+  }
+
+  const playTrack = (performer: Performer, track: (typeof tracks)[number]) => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    const trackKey = `${performer.name}:${track.audioSrc}`
+    if (loadedTrackKeyRef.current !== trackKey) {
+      audio.src = track.audioSrc
+      audio.load()
+      loadedTrackKeyRef.current = trackKey
+    }
+
+    setHasAudioError(false)
+    void audio.play().catch(() => setHasAudioError(true))
+  }
+
+  const selectRecord = (trackIndex: number) => {
+    const audio = audioRef.current
+    const track = tracks[trackIndex]
+    if (!audio || !track || !selectedPerformer) return
+
+    if (selectedTrack === trackIndex) {
+      if (audio.paused) {
+        playTrack(selectedPerformer, track)
+      } else {
+        audio.pause()
+      }
+      return
+    }
+
+    setSelectedTrack(trackIndex)
+    playTrack(selectedPerformer, track)
+  }
+
+  const moveCarousel = (direction: -1 | 1) => {
+    audioRef.current?.pause()
+    setSelectedTrack((current) => (current + direction + tracks.length) % tracks.length)
+  }
+
+  const showTrack = (trackIndex: number) => {
+    audioRef.current?.pause()
+    setSelectedTrack(trackIndex)
+    setHasAudioError(false)
+  }
+
+  const togglePlayback = () => {
+    const audio = audioRef.current
+    if (!audio || !activeTrack || !selectedPerformer) return
+
+    if (audio.paused) {
+      playTrack(selectedPerformer, activeTrack)
+    } else {
+      audio.pause()
+    }
+  }
+
+  return (
+    <div className="performer-showcase">
+      <div className="performer-grid">
+        {performers.map((performer, index) => (
+          <article className="performer-card" key={performer.name}>
+            <div className="performer-image-frame">
+              <img alt={performer.imageAlt} className="performer-image" loading="lazy" src={performer.image} />
+              <span className="performer-edition">SIDE {String.fromCharCode(65 + index)}</span>
+            </div>
+            <div className="performer-card-content">
+              <p className="eyebrow">The seventies sound</p>
+              <h3>{performer.name}</h3>
+              <button
+                aria-controls="performer-record-picker"
+                aria-expanded={isPickerOpen && selectedPerformer?.name === performer.name}
+                className="performer-play-button"
+                onClick={() => openPicker(performer)}
+                type="button"
+              >
+                <span aria-hidden="true" className="performer-button-icon">♫</span>
+                Listen
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <section
+        aria-label={`${selectedPerformer?.name ?? 'Performer'} record carousel`}
+        className={`performer-record-picker${isPickerOpen ? ' is-open' : ''}`}
+        id="performer-record-picker"
+        hidden={!isPickerOpen}
+      >
+        <div className="performer-picker-heading">
+          <div>
+            <p className="eyebrow">The listening room</p>
+            <h3>{selectedPerformer?.name} <em>records.</em></h3>
+            <p className="performer-picker-hint">Choose from 3 tracks in the carousel.</p>
+          </div>
+          <button
+            aria-label="Close record selector"
+            className="performer-picker-close"
+            onClick={closePicker}
+            type="button"
+          >
+            Close <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        {selectedPerformer && (
+          <>
+            <div className="performer-carousel">
+              <button
+                aria-label="Previous record"
+                className="performer-carousel-arrow"
+                onClick={() => moveCarousel(-1)}
+                type="button"
+              >
+                <span aria-hidden="true">←</span>
+              </button>
+              <div aria-live="polite" className="performer-carousel-window">
+                <div
+                  className="performer-carousel-track"
+                  style={{ transform: `translateX(-${selectedTrack * 100}%)` }}
+                >
+                  {tracks.map((track, index) => {
+                    const isSelected = selectedTrack === index
+                    return (
+                      <button
+                        aria-label={`${isSelected && isPlaying ? 'Pause' : 'Play'} ${selectedPerformer.name}, ${track.title}`}
+                        aria-pressed={isSelected && isPlaying}
+                        className={`performer-record-slide${isSelected ? ' is-selected' : ''}${isSelected && isPlaying ? ' is-playing' : ''}`}
+                        key={track.number}
+                        onClick={() => selectRecord(index)}
+                        type="button"
+                      >
+                        <span aria-hidden="true" className="performer-record">
+                          <span className="performer-record-label">{selectedPerformer.name}</span>
+                          <span className="performer-record-hole" />
+                        </span>
+                        <span className="performer-record-name">{track.title}</span>
+                        <span className="performer-record-action">
+                          {isSelected && isPlaying ? 'Now playing' : 'Tap to play'}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+              <button
+                aria-label="Next record"
+                className="performer-carousel-arrow"
+                onClick={() => moveCarousel(1)}
+                type="button"
+              >
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+            <div aria-label="Choose a record" className="performer-carousel-dots">
+              {tracks.map((track, index) => (
+                <button
+                  aria-label={`Show ${track.title}`}
+                  aria-current={selectedTrack === index ? 'true' : undefined}
+                  className={`performer-carousel-dot${selectedTrack === index ? ' is-active' : ''}`}
+                  key={track.number}
+                  onClick={() => showTrack(index)}
+                  type="button"
+                />
+              ))}
+            </div>
+          </>
+        )}
+        {selectedPerformer && activeTrack && (
+          <div className="performer-now-playing" aria-live="polite">
+            <span className={`performer-now-playing-indicator${isPlaying ? ' is-playing' : ''}`} aria-hidden="true" />
+            <span>
+              {hasAudioError
+                ? `Could not load ${activeTrack.audioFileName}.`
+                : isPlaying
+                  ? `Now playing ${selectedPerformer.name} · ${activeTrack.title}`
+                  : `Selected: ${selectedPerformer.name} · ${activeTrack.title}`}
+            </span>
+            {!hasAudioError && (
+              <button className="performer-toggle-playback" onClick={togglePlayback} type="button">
+                {isPlaying ? 'Pause' : 'Play'}
+              </button>
+            )}
+          </div>
+        )}
+        <audio
+          onEnded={() => setIsPlaying(false)}
+          onError={() => {
+            setIsPlaying(false)
+            setHasAudioError(true)
+          }}
+          onPause={() => setIsPlaying(false)}
+          onPlay={() => setIsPlaying(true)}
+          preload="none"
+          ref={audioRef}
+        />
+      </section>
+    </div>
+  )
+}
+
+export default PerformerSection

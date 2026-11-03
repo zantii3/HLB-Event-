@@ -3,11 +3,12 @@ import { useRef, useState } from 'react'
 type VenueFlipCardProps = {
   image: string
   imageAlt: string
+  imageFit?: 'contain' | 'cover'
   title: string
   note: string
 }
 
-function VenueFlipCard({ image, imageAlt, title, note }: VenueFlipCardProps) {
+function VenueFlipCard({ image, imageAlt, imageFit = 'contain', title, note }: VenueFlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false)
   const lightboxRef = useRef<HTMLDialogElement>(null)
 
@@ -22,7 +23,12 @@ function VenueFlipCard({ image, imageAlt, title, note }: VenueFlipCardProps) {
       >
         <span className="venue-flip-inner">
           <span aria-hidden={isFlipped} className="venue-flip-face venue-flip-front">
-            <img alt={imageAlt} loading="lazy" src={image} />
+            <img
+              alt={imageAlt}
+              className={`venue-flip-image is-${imageFit}`}
+              loading="lazy"
+              src={image}
+            />
             <span className="venue-flip-hint">Flip for details <span aria-hidden="true">↻</span></span>
           </span>
           <span aria-hidden={!isFlipped} className="venue-flip-face venue-flip-back">
