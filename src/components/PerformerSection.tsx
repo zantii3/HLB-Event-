@@ -4,6 +4,7 @@ type Performer = {
   image: string
   imageAlt: string
   name: string
+  members?: { image: string; imageAlt: string }[]
   audioFiles: string[]
   audioFileNames: string[]
   trackTitles?: string[]
@@ -21,6 +22,8 @@ function PerformerSection({ performers }: PerformerSectionProps) {
   const [selectedTrack, setSelectedTrack] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [hasAudioError, setHasAudioError] = useState(false)
+  const [selectedMembers, setSelectedMembers] = useState<Performer | null>(null)
+  const [flippedMembers, setFlippedMembers] = useState<Set<number>>(() => new Set())
 
   const tracks = selectedPerformer
     ? [1, 2, 3].map((number) => ({
@@ -36,6 +39,8 @@ function PerformerSection({ performers }: PerformerSectionProps) {
 
   const openPicker = (performer: Performer) => {
     audioRef.current?.pause()
+    setSelectedMembers(null)
+    setFlippedMembers(new Set())
     setSelectedPerformer(performer)
     setSelectedTrack(0)
     setHasAudioError(false)
@@ -45,6 +50,31 @@ function PerformerSection({ performers }: PerformerSectionProps) {
   const closePicker = () => {
     audioRef.current?.pause()
     setIsPickerOpen(false)
+  }
+
+  const openMembers = (performer: Performer) => {
+    audioRef.current?.pause()
+    setIsPickerOpen(false)
+    setIsPlaying(false)
+    setFlippedMembers(new Set())
+    setSelectedMembers(performer)
+  }
+
+  const closeMembers = () => {
+    setSelectedMembers(null)
+    setFlippedMembers(new Set())
+  }
+
+  const toggleMemberCard = (index: number) => {
+    setFlippedMembers((current) => {
+      const next = new Set(current)
+      if (next.has(index)) {
+        next.delete(index)
+      } else {
+        next.add(index)
+      }
+      return next
+    })
   }
 
   const playTrack = (performer: Performer, track: (typeof tracks)[number]) => {
@@ -109,25 +139,88 @@ function PerformerSection({ performers }: PerformerSectionProps) {
           <article className="performer-card" key={performer.name}>
             <div className="performer-image-frame">
               <img alt={performer.imageAlt} className="performer-image" loading="lazy" src={performer.image} />
-              <span className="performer-edition">SIDE {String.fromCharCode(65 + index)}</span>
+              <span className="performer-edition">GROUP {index + 1}</span>
             </div>
             <div className="performer-card-content">
               <p className="eyebrow">The seventies sound</p>
               <h3>{performer.name}</h3>
-              <button
-                aria-controls="performer-record-picker"
-                aria-expanded={isPickerOpen && selectedPerformer?.name === performer.name}
-                className="performer-play-button"
-                onClick={() => openPicker(performer)}
-                type="button"
-              >
-                <span aria-hidden="true" className="performer-button-icon">♫</span>
-                Listen
-              </button>
+              <div className="performer-card-actions">
+                <button
+                  aria-controls="performer-record-picker"
+                  aria-expanded={isPickerOpen && selectedPerformer?.name === performer.name}
+                  className="performer-play-button"
+                  onClick={() => openPicker(performer)}
+                  type="button"
+                >
+                  <span aria-hidden="true" className="performer-button-icon">♫</span>
+                  Listen
+                </button>
+                {performer.members && performer.members.length > 0 && (
+                  <button
+                    aria-controls="performer-members"
+                    aria-expanded={selectedMembers?.name === performer.name}
+                    className="performer-view-button"
+                    onClick={() => openMembers(performer)}
+                    type="button"
+                  >
+                    <svg aria-hidden="true" className="performer-view-icon" viewBox="0 0 24 24">
+                      <path d="M12 5c-5.2 0-9.4 4.1-10.5 7 1.1 2.9 5.3 7 10.5 7s9.4-4.1 10.5-7C21.4 9.1 17.2 5 12 5Zm0 11.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Zm0-2a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                    </svg>
+                    View performers
+                  </button>
+                )}
+              </div>
             </div>
           </article>
         ))}
       </div>
+
+      {selectedMembers && (
+        <section
+          aria-label={`${selectedMembers.name} performers`}
+          className="performer-members"
+          id="performer-members"
+        >
+          <div className="performer-members-heading">
+            <div>
+              <p className="eyebrow">
+                Group {performers.findIndex((performer) => performer.name === selectedMembers.name) + 1}
+              </p>
+              <h3>Meet the <em>performers.</em></h3>
+              <p>Flip each photo to meet all five members.</p>
+            </div>
+            <button className="performer-picker-close" onClick={closeMembers} type="button">
+              Close <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div className="performer-members-grid">
+            {selectedMembers.members?.map((member, index) => {
+              const isFlipped = flippedMembers.has(index)
+              return (
+                <button
+                  aria-label={`${isFlipped ? 'Show' : 'Flip to see'} performer ${index + 1}`}
+                  aria-pressed={isFlipped}
+                  className={`performer-member-card${isFlipped ? ' is-flipped' : ''}`}
+                  key={member.image}
+                  onClick={() => toggleMemberCard(index)}
+                  type="button"
+                >
+                  <span className="performer-member-card-inner">
+                    <span className="performer-member-face performer-member-front">
+                      <span className="performer-member-number">0{index + 1}</span>
+                      <span>Member {index + 1}</span>
+                      <span className="performer-member-hint">Flip to reveal</span>
+                    </span>
+                    <span className="performer-member-face performer-member-back">
+                      <img alt={member.imageAlt} loading="lazy" src={member.image} />
+                    </span>
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+      )}
 
       <section
         aria-label={`${selectedPerformer?.name ?? 'Performer'} record carousel`}

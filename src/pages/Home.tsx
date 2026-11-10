@@ -47,6 +47,39 @@ const womenOutfitImages = Object.entries(
   }),
 ).sort(([left], [right]) => left.localeCompare(right, undefined, { numeric: true }))
 
+const groupOneMemberImages = Object.entries(
+  import.meta.glob<string>('../assets/images/G1?.jpg', {
+    eager: true,
+    import: 'default',
+    query: '?url',
+  }),
+).sort(([left], [right]) => left.localeCompare(right))
+
+const groupTwoMemberImages = Object.entries(
+  import.meta.glob<string>('../assets/images/G2?.jpg', {
+    eager: true,
+    import: 'default',
+    query: '?url',
+  }),
+).sort(([left], [right]) => left.localeCompare(right))
+
+const groupThreeMemberImages = Object.entries(
+  import.meta.glob<string>('../assets/images/G3?.jpg', {
+    eager: true,
+    import: 'default',
+    query: '?url',
+  }),
+).sort(([left], [right]) => left.localeCompare(right))
+
+const outfitColorPalettes = [
+  ['#b84d36', '#e27a45', '#efbb57', '#f1d88a'],
+  ['#526744', '#88935b', '#c4aa62', '#e7cc88'],
+  ['#7a4938', '#b86b48', '#d99b69', '#e7c89b'],
+  ['#435f63', '#66877c', '#9eaa7a', '#d7c58c'],
+  ['#a34835', '#cd7045', '#e5a84e', '#e9cf91'],
+  ['#554238', '#826348', '#b18a57', '#dcc18a'],
+]
+
 function Home() {
   const [dressStyle, setDressStyle] = useState<DressStyle | null>(null)
   const [tvMode, setTvMode] = useState<TvMode>('off')
@@ -286,6 +319,17 @@ function Home() {
             <p className="eyebrow">The dress code</p>
             <h2 id="dress-title">Choose<br />your <em>outfit.</em></h2>
             <p>A little 70s-inspired outfit guidance.</p>
+            <div aria-hidden="true" className="outfit-filmstrip">
+              <div className="outfit-filmstrip-frames">
+                {outfitColorPalettes.map((palette, index) => (
+                  <div className="outfit-film-frame" key={index}>
+                    {palette.map((color) => (
+                      <span key={color} style={{ backgroundColor: color }} />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
             <div aria-label="Choose a dress style" className="dress-choices" data-scroll-reveal>
               {(['men', 'women'] as const).map((style) => (
                 <button
@@ -316,8 +360,18 @@ function Home() {
                 key={dressStyle}
               >
                 <div className="outfit-gallery-heading">
-                  <h3>{dressStyle === 'men' ? "Men's" : "Women's"} outfit ideas</h3>
-                  <p>Style index / 10 looks</p>
+                  <div>
+                    <h3>{dressStyle === 'men' ? "Men's" : "Women's"} outfit ideas</h3>
+                    <p>Style index / 10 looks</p>
+                  </div>
+                  <button
+                    aria-label="Close outfit ideas"
+                    className="outfit-gallery-close"
+                    onClick={() => setDressStyle(null)}
+                    type="button"
+                  >
+                    Close <span aria-hidden="true">×</span>
+                  </button>
                 </div>
                 <div className="outfit-gallery-grid">
                   {(dressStyle === 'men' ? menOutfitImages : womenOutfitImages).map(
@@ -455,6 +509,10 @@ function Home() {
                 audioFileNames: ['ABBA.mp4', 'Gimme.mp4', 'Mamma.mp4', 'abba-3.mp4'],
                 image: abbaImage,
                 imageAlt: 'ABBA',
+                members: groupOneMemberImages.map(([, image], index) => ({
+                  image,
+                  imageAlt: `Group 1 performer ${index + 1}`,
+                })),
                 name: 'ABBA',
                 trackTitles: ['Dancing Queen', 'Gimme! Gimme! Gimme!', 'Mamma Mia'],
               },
@@ -463,6 +521,10 @@ function Home() {
                 audioFileNames: ['Magsayawan.mp4', 'Rock.mp4', 'Awitin.mp4', 'vst-3.mp4'],
                 image: vstImage,
                 imageAlt: 'VST',
+                members: groupTwoMemberImages.map(([, image], index) => ({
+                  image,
+                  imageAlt: `Group 2 performer ${index + 1}`,
+                })),
                 name: 'VST',
                 trackTitles: ['Magsayawan', 'Rock Baby Rock', 'Awitin Mo at Isasayaw Ko'],
               },
@@ -471,6 +533,10 @@ function Home() {
                 audioFileNames: ['Bongga.mp4', 'Manila.mp4', 'Annie.mp4', 'hotdog-3.mp4'],
                 image: hotdogImage,
                 imageAlt: 'Hotdog',
+                members: groupThreeMemberImages.map(([, image], index) => ({
+                  image,
+                  imageAlt: `Group 3 performer ${index + 1}`,
+                })),
                 name: 'Hotdog',
                 trackTitles: ['Bongga Ka Day', 'Manila', 'Annie Batungbakal'],
               },
